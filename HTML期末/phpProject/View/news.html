@@ -1,0 +1,488 @@
+<?php
+    error_reporting(E_ALL^E_NOTICE);
+?>
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>动态</title>
+    <!-- 引入bootstrap样式文件 -->
+    <link rel="stylesheet" href="public/bootstrap-4.3.1-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="public/font/iconfont.css">
+    <style>
+        a{
+            color: #808080;
+        }
+        a:hover{
+            color:#000;
+        }
+        html,body{
+            width: 100%;
+            height: 100%;
+        }
+        .nav-item a{
+            color: #000;
+        }
+        .nav-item .active{
+            font-size:20px;
+            color: #fff;
+            font-weight: 600;
+        }
+        #bg{
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            z-index: -1;
+        }
+        .container{
+            background: #fff;
+            min-height:100% ;
+            height: auto;
+            padding-bottom: 30px;
+        }
+        .user_text{
+            display: inline-block;
+        }
+        .user_text li{
+            min-width: 40px;
+            float: left;
+        }
+        .navbar{
+            background:#8DB1A3;
+        }
+        .avatar{
+            width: 50px;
+            height: 50px;
+            background: #ccc;
+        }
+        .name{
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+            background: #B3D7CB;
+        }
+        .user_info{
+            margin-top:20px;
+            border-right: 2px solid #B3D7CB;
+        }
+        .put_new{
+            margin:20px auto 20px auto;
+        }
+
+        .news{
+            margin-top: 30px;
+        }
+        .new{
+            /* border: 2px solid  #F19482; */
+        }
+        .new div{
+            padding: 0;
+        }
+        .new_img{
+            width: 100px;
+            height: 100px;
+            padding: 0;
+        }
+        
+        #localImag{
+            margin-top: 20px;
+            display: inline-block;
+        }
+        #localImag img{
+            float: left;
+            margin-right: 20px;
+        }
+        .new_img{
+            width: 100px;
+            height:100px;
+            margin-right: 15px;
+        }
+        input{
+            border: 1px solid #B3D7CB;
+            box-shadow: -2px -1px #B3D7CB;
+        }
+
+        input[type='submit'],
+        input[type='button'],
+        button{
+            background:  #B3D7CB;
+            border: none;
+            color: #fff;;
+            border-radius: 5px;
+        }
+        .text{
+            margin: 20px 0;
+        }
+        .time{
+            color:  #8DB1A3;
+            margin: 10px 0;
+        }
+        .time>a {
+            margin-left: 40px;
+            color: #fff ;
+            background: #B3D7CB;
+            height: 30px;
+            line-height: 30px;
+            border-radius: 5px;
+            padding: 5px 5px;
+        }
+        .comments{
+            margin-left: 15px;
+            margin-top: 10px;
+        }
+        input[type='submit']{
+            margin-left: 10px;
+        }
+        .avatar_img{
+            width: 40px;
+            float: left;
+        }
+        .addlike{
+            margin-left: 30px;
+        }
+        .comments_c{
+            background: #F1F3F4;
+            margin-top: 10px;
+            border-radius: 20px;
+            padding-left: 20px!important;
+        }
+        .comments_name{
+            display:inline-block;
+            font-size:18px;
+            font-weight:600;
+            min-width: 50px;
+            color: #8DB1A3;
+        }
+        .comments_text{
+            margin: 5px auto;
+        }
+    </style>
+</head>
+<body>
+<img id="bg" src="public/img/bg3.jpg" alt="">
+<div class="container" id="divContent" style=" overflow-y: scroll" onscroll= "KeepScrollBar()">
+
+    <nav class="navbar navbar-expand-md">
+        <a class="navbar-brand" href="#">
+            <img src="public/img/logo.png" alt="Logo" style="width:40px;">
+        </a>
+
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link " href="/phpProject/?a=index">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/phpProject/?a=foodclass">菜谱</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/phpProject/?a=user">个人中心</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/phpProject/?a=news">动态</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/phpProject/?a=friends">好友列表</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/phpProject/?a=morefriends">更多好友</a>
+                </li>
+            </ul>
+        </div>
+        <ul class="nav navbar-nav navbar-right user_text">
+            <?php
+            if(!empty( $_SESSION['username'])){
+                $username = $_SESSION['username'];
+                 echo "<li>欢迎！</li> ";
+            echo "<li id='username'>$username</li> ";
+            echo "<li><a href='/phpProject/?a=logout'> 退出</a></li>";
+            }else{
+            echo "<li><a href='/phpProject/?a=regis'> 注册</a></li>";
+            echo "<li><a href='/phpProject'> 登录</a></li>";
+            }
+            ?>
+        </ul>
+        <button class="navbar-toggler"  type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+            <span class="iconfont icon-xialaliebiaokuang" style="font-size:26px;"></span>
+        </button>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-12 put_new" >
+                <h3>发布动态  </h3>
+                <div id="myinfo">
+                    <form action="/phpProject/?a=uploadNew"  class="row" method="post" enctype="multipart/form-data">
+                        <div class="col-md-1 col-1"></div>
+                        <input type="text" placeholder="美食推荐。。。" class="col-10 col-md-6" name="text" style="border-left: 1px solid #F19482;">
+
+                        <div class="col-md-1 col-1"></div>
+                        <input type='button' value="上传图片" class="col-5 col-md-2" OnClick='javascript:$("#doc").click();'/>
+                        <input type="file" name="img[]" multiple id="doc" onchange="showImage();" style="display: none;" />
+                        <input type="submit"class="col-5 col-md-1" value="发送"/>
+                        <div class="col-md-1 col-1"></div>
+                    </form>
+                    <div id="localImag" >
+                        <img id="preview1" width=-1 height=-1 style="display:none" />
+                        <img id="preview2" width=-1 height=-1 style="display:none" />
+                        <img id="preview3" width=-1 height=-1 style="display:none" />
+                    </div>
+                </div>
+                <p class="text-center error">
+                    <?= $errinfo ?>
+                </p>
+                <h3>搜索动态</h3>
+                <div id="search">
+                    <form action="/phpProject/?a=searchNew"  class="row" method="post">
+                        <div class="col-md-1 col-1"></div>
+                        <input type="text" placeholder="搜索用户" class="col-10 col-md-6" name="s_username" style="border-left: 1px solid #F19482;">
+                        <div class="col-md-5"></div>
+
+                        <div class="col-md-1 col-1"></div>
+                        <input type="text" placeholder="搜索内容" class="col-10 col-md-6" name="s_content" style="border-left: 1px solid #F19482;">
+
+
+                        <input type="submit"class="col-5 col-md-1" value="搜索"/>
+
+                    </form>
+                </div>
+                <p class="text-center error" style="background:  #DCEDE7; margin-top:10px;">
+                    <?= $errinfo1 ?>
+                </p>
+            </div>
+
+            <?php
+            if($news==null){
+                echo "<div class='col-md-12 text-center' style='font-size:24px;font-weight:600;color:#8DB1A3;'>暂无动态！</div>";
+                }else{
+                for( $i= 0;$i< count($news);$i++){
+                echo "<div class='row news'>";
+                    echo "<div class='col-md-2 col-2 text-right'>";
+                        echo "<img src='".$news[$i]["avatar"]."' class='avatar'>";
+                    echo "</div>";
+                echo "<div class='col-md-8 col-10'>";
+                        echo"<div class='new'>";
+                            echo"<div class='col-md-12 name'>";
+                                 echo $news[$i]['nickname'];
+                            echo"</div>";
+                            echo"<div class='text col-md-12'>";
+                                 echo $news[$i]['content'];
+                            echo"</div>";
+                            if($news[$i]["img"][0]){
+                                echo"<img class='new_img ' src='".$news[$i]["img"][0]."'>";
+                            }
+                            if($news[$i]["img"][1]){
+                                echo"<img class='new_img ' src='".$news[$i]["img"][1]."'>";
+                            }
+                            if($news[$i]["img"][2]){
+                                echo"<img class='new_img ' src='".$news[$i]["img"][2]."'>";
+                            }
+                            echo"<div class='time col-md-12 row'>";
+                                echo $news[$i]['createtime'];
+
+
+                                echo"<button class='addlike'>";
+                                    echo"<div class='id' style='display: none;'>".$_SESSION['userid']."</div>";
+                                    echo"<div class='avatar' style='display: none;'>".$_SESSION['avatar']."</div>";
+                                    echo"<div class='newsid' style='display: none;'>".$news[$i]["id"]."</div>";
+                                    echo"<div class='like' style='display: none;' >".$news[$i]["like"]."</div>";
+                                    echo"<div class='like_text'> ";
+                                        if($news[$i]['like']){
+                                        echo '取消点赞';
+                                        }else{
+                                        echo '点赞';
+                                        }
+                                    echo"</div>";
+                                echo"</button>";
+
+
+                                echo"<div class='avatars col-md-12'>";
+                                    forEach( $news[$i]['like_users'] as $user) {
+                                    echo"<div class='avatar_img'>";
+                                        echo"<div class='uid' style='display: none;'>".$user["uid"]."</div>";
+                                        echo"<img style='width:30px;height:30px;' src='".$user["avatar"]."' >";
+                                    echo"</div>";
+                                    }
+                                echo"</div>";
+
+                            echo"</div>";
+                            echo"<div class='col-md-12 comments'>";
+                                echo"<div  class='row'>";
+                                    echo"<input type='text' value='".$news[$i]["id"]."' style='visibility: hidden;width: 0;' name='newid' class='input_newid'>";
+                                    echo"<input style='width: 60%;'  type='text' placeholder='请输入评论。。'  name='content' class='input_content'>";
+                                    echo"<button class='comments_btn'>发送</button>";
+                                echo"</div>";
+                            echo"</div>";
+                            echo"<div class='comments_c'>";
+                            forEach( $news[$i]['comments'] as $comment) {
+                            echo"<div class='comments_text col-md-12'>";
+                                echo"<span class='comments_name'>".$comment['nickname']." :</span>";
+                                echo"<span>".$comment['content']."</span>";
+
+                            echo"</div>";
+                            }
+                            echo"</div>";
+                        echo"</div>";
+
+                    echo"</div>";
+                echo"<div class='col-md-2 col-0'></div>";
+                echo "</div>";
+
+                }
+
+                }
+
+            ?>
+        </div>
+    </div>
+
+</div>
+
+<!--引入jQuery-->
+<script src="public/js/jquery-3.4.1.min.js"></script>
+<script src="public/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+    function KeepScrollBar() {
+        var scrollPos;
+        if (typeof window.pageYOffset != 'undefined') {
+            scrollPos = window.pageYOffset;
+        }
+        else if (typeof document.body != 'undefined') {
+            scrollPos = document.getElementById('divContent').scrollTop;
+        }
+        document.cookie = "scrollTop=" + scrollPos;
+    }
+    window.onload = function (){
+        if (document.cookie.match(/scrollTop=([^;]+)(;|$)/) != null) {
+            var arr = document.cookie.match(/scrollTop=([^;]+)(;|$)/);
+            document.getElementById('divContent').scrollTop = parseInt(arr[1]);
+        }
+    }
+</script>
+<script>
+    function showImage() {
+        var docObj = document.getElementById("doc");
+        var imgObjPreview1 = document.getElementById("preview1");
+        var imgObjPreview2 = document.getElementById("preview2");
+        var imgObjPreview3 = document.getElementById("preview3");
+        if (docObj.files && docObj.files[0]) {
+            //火狐下，直接设img属性
+            imgObjPreview1.style.display = 'block';
+            imgObjPreview1.style.width = '100px';
+            imgObjPreview1.style.height = '100px';
+            //imgObjPreview.src = docObj.files[0].getAsDataURL();
+            //火狐7以上版本不能用上面的getAsDataURL()方式获取，需要一下方式
+            imgObjPreview1.src = window.URL.createObjectURL(docObj.files[0]);
+
+            imgObjPreview2.style.display = 'block';
+            imgObjPreview2.style.width = '100px';
+            imgObjPreview2.style.height = '100px';
+            //imgObjPreview.src = docObj.files[0].getAsDataURL();
+            //火狐7以上版本不能用上面的getAsDataURL()方式获取，需要一下方式
+            imgObjPreview2.src = window.URL.createObjectURL(docObj.files[1]);
+
+            imgObjPreview3.style.display = 'block';
+            imgObjPreview3.style.width = '100px';
+            imgObjPreview3.style.height = '100px';
+            //imgObjPreview.src = docObj.files[0].getAsDataURL();
+            //火狐7以上版本不能用上面的getAsDataURL()方式获取，需要一下方式
+            imgObjPreview3.src = window.URL.createObjectURL(docObj.files[2]);
+        } else {
+            //IE下，使用滤镜
+            docObj.select();
+            var imgSrc = document.selection.createRange().text;
+            var localImagId = document.getElementById("localImag");
+            //必须设置初始大小
+            localImagId.style.width = "250px";
+            localImagId.style.height = "200px";
+            //图片异常的捕捉，防止用户修改后缀来伪造图片
+            try {
+                localImagId.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale)";
+                localImagId.filters
+                        .item("DXImageTransform.Microsoft.AlphaImageLoader").src = imgSrc;
+            } catch (e) {
+                alert("您上传的图片格式不正确，请重新选择!");
+                return false;
+            }
+            imgObjPreview.style.display = 'none';
+            document.selection.empty();
+        }
+        return true;
+    }
+</script>
+<script>
+    $(document).ready(function(){
+        $(".addlike").on("click",function(){
+            let uid = $(this).children(".id").text();
+            let avatar = $(this).children(".avatar").text();
+            let newsid =  $(this).children(".newsid").text();
+            let like = $(this).children(".like").text();
+
+            var that = $(this);
+            $.get("/phpProject/?a=addLike",{id:newsid,like:like},function(data){
+
+                if(like ==1){
+//                    $(".uid:contains(id)").parent("avatar_img").remove();
+                    console.log($(that.next()).find(".avatar_img>.uid:contains(uid)").text());
+                    var dom = $(that.next()).find(".avatar_img .uid");
+                    console.log(dom);
+                    $.each(dom, function(key, val) {
+                        console.log(val.innerHTML);
+                        if(val.innerHTML == uid){
+                            $(val).parent().remove();
+                        }
+                    });
+
+                    $(dom).parent("avatar_img").remove();
+
+//                    uidDom.parent("avatar_img").remove();
+                    that.children(".like").text("0");
+                    that.children(".like_text").text("点赞");
+                }
+                if(like == 0){
+                    var html = "";
+                    html += "<div class='avatar_img'><div class='uid'style='display: none;' >";
+                    html += uid;
+                    html += "</div><img style='width:30px;height:30px;' src='";
+                    html += avatar;
+                    html += "' ></div>";
+                    that.next().append(html)
+                    that.children(".like").text("1");
+                    that.children(".like_text").text("取消点赞");
+                }
+            });
+        });
+
+        $(".comments_btn").on("click",function(){
+            let input_newid = $(this).parent().children(".input_newid").val();
+            let input_content = $(this).parent().children(".input_content").val();
+
+            let username = $("#username").text();
+            var that = $(this);
+            $.post("/phpProject/?a=addcomments",{newid:input_newid, content:input_content},function(data){
+                var html = "";
+                html += "<div class='comments_text col-md-12'><span class='comments_name'>";
+                html += username;
+                html += ":</span><span>";
+                html += input_content;
+                html += "</span></div>";
+
+                var dom = that.parent().parent();
+                $(dom).next().append(html);
+                that.parent().children(".input_content").val("");
+            });
+        });
+    });
+</script>
+</body>
+
+</html>
